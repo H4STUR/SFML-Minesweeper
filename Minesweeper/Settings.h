@@ -30,6 +30,11 @@ public:
 		return static_cast<float>((y * this->resolution.height) / 100);
 	}
 
+	inline float getPercent(const float& value, const float percent)
+	{
+		return ((percent / 100) * value);
+	}
+
 	inline void Resize(sf::VideoMode newResolution)
 	{
 		this->resolution = newResolution;
@@ -48,6 +53,7 @@ public:
 	unsigned FPSLimit;
 	std::vector<std::string> languages;
 	bool DebugMode;
+	sf::Font* font;
 
 	//Variables
 	sf::RenderWindow* window;

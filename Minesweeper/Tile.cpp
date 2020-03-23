@@ -21,7 +21,6 @@ Tile::Tile(float grid, sf::Vector2f position)
 	this->shape.setSize(sf::Vector2f(grid, grid));
 	this->shape.setFillColor(sf::Color::White);
 	this->shape.setTexture(&tex);
-	std::cout << "CREATED\n ";
 }
 
 Tile::~Tile()

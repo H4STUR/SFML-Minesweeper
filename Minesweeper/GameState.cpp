@@ -22,6 +22,9 @@ void GameState::init()
 
 	//position of mine field
 	this->fieldPosition = sf::Vector2f(this->padding, this->topBarHeight + this->padding);
+
+	//counter test
+	this->counter = new gui::Counter(this->data, sf::Vector2f(15.f, 15.f), sf::Vector2f(6.f, 4.f), 2.f, 69);
 }
 
 void GameState::initGui()
@@ -34,6 +37,7 @@ void GameState::initGui()
 			static_cast<float>(this->data->resolution.height)));
 		this->BackGround.setFillColor(sf::Color(80, 80, 80, 255));
 	}
+
 	//Top Bar stuff
 	{
 		this->topBar.setPosition(sf::Vector2f(this->padding, this->padding));
@@ -66,6 +70,7 @@ GameState::GameState(Data* data, sf::Vector2i fieldSize)
 GameState::~GameState()
 {
 	delete this->minefield;
+	delete this->counter;
 }
 
 void GameState::updateInput(const float& deltaTime)
@@ -76,6 +81,10 @@ void GameState::updateInput(const float& deltaTime)
 		this->endState();
 	}
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && this->getKeytime())
+	{
+		this->counter->increase();
+	}
 }
 
 void GameState::updateGui()
@@ -108,6 +117,9 @@ void GameState::render(sf::RenderTarget* target)
 	
 	//Gselector
 	target->draw(this->selector);
+
+	//counter
+	this->counter->render(target);
 }
 
 

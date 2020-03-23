@@ -31,6 +31,7 @@ private:
 	sf::Clock clock;
 	std::stack<State*> states;
 	float DeltaTime;
+	sf::Font font;
 
 	Data data;
 	
@@ -38,7 +39,7 @@ private:
 	//Inits
 	void initVariables();
 	void initWindow();
-	void initSettings();
+	void initFont();
 	void initData();
 	void initState();
 };

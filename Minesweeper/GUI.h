@@ -75,7 +75,6 @@ namespace gui
 	public:
 		//Button with text
 		Button(Data* data,
-			sf::Font* font, 
 			std::string BTNText = "BUTTON",
 			float fontPercentSize = 2.5f,
 			sf::Vector2f position = sf::Vector2f(0.f, 0.f),
@@ -122,7 +121,6 @@ namespace gui
 
 	private:
 		//Variables
-		sf::Font* font;
 		sf::Text text;
 
 		sf::Color BTNcolor;
@@ -194,15 +192,15 @@ namespace gui
 	{
 	public:
 		Counter();
-		Counter(Data* data, sf::Vector2f position, sf::Vector2f sizePercent, sf::Font* font, float fontPercentSize, int defaultValue = 0, bool filedWithZeros = true,
+		Counter(Data* data, sf::Vector2f position, sf::Vector2f sizePercent, float fontPercentSize, int defaultValue = 0, bool filedWithZeros = true,
 			sf::Color backGroundColor = sf::Color(60, 60, 60, 255),
 			sf::Color textColor = sf::Color(0, 0, 0, 255),
 			sf::Color outlineColor = sf::Color(0, 0, 0, 255));
 		~Counter();
 
 		//Accessors && Modifiers
-		inline void increase(unsigned amout = 1);
-		inline void decrease(unsigned amout = 1);
+		void increase(unsigned amout = 1);
+		void decrease(unsigned amout = 1);
 
 		const int& getValue() const;
 
@@ -214,7 +212,6 @@ namespace gui
 
 		//variables
 		sf::Text text;
-		sf::Font* font;
 
 		sf::RectangleShape background;
 		sf::Color backGroundColor;

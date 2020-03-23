@@ -14,6 +14,7 @@ Data::Data()
 	this->FPSLimit = 64;
 	this->videoModes = sf::VideoMode::getFullscreenModes();
 	this->DebugMode = true;
+	this->font = nullptr;
 }
 
 

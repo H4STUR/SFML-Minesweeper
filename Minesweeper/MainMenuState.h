@@ -24,7 +24,6 @@ public:
 
 private:
 	//variables
-	sf::Font font;
 	sf::RectangleShape backGround;
 
 	sf::Texture symbolTex;

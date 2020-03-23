@@ -9,6 +9,10 @@ void Game::initVariables()
 
 void Game::initWindow()
 {
+	//loading window settings
+	this->data.loadSettings();
+	this->data.SwitchDebugMode(true);
+
 	if(data.fullstreen)
 		this->window = new sf::RenderWindow(data.resolution, data.title, sf::Style::Fullscreen);
 	else
@@ -18,16 +22,24 @@ void Game::initWindow()
 	printf("Window Successfully created! \n");
 }
 
-void Game::initSettings()
+void Game::initFont()
 {
-	data.loadSettings();
-	data.SwitchDebugMode(true);
+	//FONT STUFF
+	if (this->font.loadFromFile("fonts/Arial.ttf"))
+	{
+		if (this->data.DebugMode)
+			printf("Font Succesfuly Loaded!\n");
+	}
+	else
+		printf("ERROR! Font Cannot be Loaded! :: MainMenuState -> initGui()\n");
 }
+
 
 void Game::initData()
 {
-	data.window = this->window;
-	data.states = &this->states;
+	this->data.window = this->window;
+	this->data.states = &this->states;
+	this->data.font = &this->font;
 }
 
 
@@ -40,9 +52,9 @@ void Game::initState()
 Game::Game()
 {
 	this->initVariables();
-	this->initSettings();
 	this->initWindow();
 	this->initData();
+	this->initFont();
 	this->initState();
 }
 

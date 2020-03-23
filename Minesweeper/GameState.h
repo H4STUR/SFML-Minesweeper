@@ -18,6 +18,7 @@ public:
 private:
 	//variables
 	Minefield* minefield;
+	gui::Counter* counter;
 
 	sf::RectangleShape BackGround;
 	sf::RectangleShape topBar;

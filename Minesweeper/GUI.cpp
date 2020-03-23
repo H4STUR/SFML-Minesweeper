@@ -69,13 +69,12 @@ void gui::Button::init()
 }
 
 //Constructors && Destructors
-gui::Button::Button(Data* data, sf::Font* font, std::string BTNText,
+gui::Button::Button(Data* data, std::string BTNText,
 	float fontPercentSize, sf::Vector2f position, sf::Vector2f sizePercent,
 	sf::Color BTNcolor, sf::Color BTNHoverColor, sf::Color BTNUsedColor,
 	sf::Color BTNTextColor, sf::Color BTNTextHoverColor, sf::Color BTNTextUsedColor,
 	sf::Color BTNOutlineColor, sf::Color BTNOutlineHoverColor, sf::Color BTNOutlineUsedColor, float outlineThickness)
 	: ButtonBaseClass(data, position, sizePercent, outlineThickness),
-	font(font),
 	fontPercentSize(fontPercentSize),
 	BTNcolor(BTNcolor),
 	BTNHoverColor(BTNHoverColor),
@@ -94,7 +93,7 @@ gui::Button::Button(Data* data, sf::Font* font, std::string BTNText,
 	//Text stuff
 	this->numChars = static_cast<short>(BTNText.length());
 	this->text.setString(BTNText);
-	this->text.setFont(*this->font);
+	this->text.setFont(*this->data->font);
 	this->text.setCharacterSize(static_cast<unsigned>(this->data->PercentSizeX(this->fontPercentSize)));
 
 	//default possition
@@ -281,47 +280,57 @@ void gui::MultiDimensionalButton::render(sf::RenderTarget * target)
 
 void gui::Counter::init()
 {
-	//text stuff
-	this->text.setFont(*this->font);
-	this->text.setString(std::to_string(this->value));
+	//frame && background
+	this->background.setPosition(this->position);
 
+	this->background.setSize(sf::Vector2f(
+		this->data->PercentSizeX(this->sizePercent.x),
+		this->data->PercentSizeY(this->sizePercent.y)
+	));
+
+	this->background.setFillColor(this->backGroundColor);
+	this->background.setOutlineThickness(-1);
+	this->background.setOutlineColor(this->outlineColor);
+
+
+	//text stuff
+	this->text.setFont(*this->data->font);
+	this->text.setString(std::to_string(this->value));
+	this->text.setFillColor(sf::Color(0, 0, 0, 255));
 	this->text.setCharacterSize(static_cast<unsigned>(this->data->PercentSizeX(this->fontPercentSize)));
 
 	//default possition
 	this->text.setPosition(
 		sf::Vector2f(
-			this->shape.getPosition().x + (this->shape.getGlobalBounds().width - this->text.getGlobalBounds().width),
-			this->shape.getPosition().y + (this->shape.getGlobalBounds().height - this->text.getGlobalBounds().height) / 2.f
+			this->background.getPosition().x + (this->background.getGlobalBounds().width - this->text.getGlobalBounds().width) / 2.f - this->data->getPercent(this->background.getGlobalBounds().width, 5.f),
+			this->background.getPosition().y + (this->background.getGlobalBounds().height - this->text.getGlobalBounds().height) / 2.f - this->data->getPercent(this->background.getGlobalBounds().width, 5.f)
 		));
 
-	//frame && background
-	this->background.setPosition(this->position);
-	this->background.setSize(this->sizePercent);
-	this->background.setFillColor(this->backGroundColor);
-	this->background.setOutlineThickness(-1);
-	this->background.setOutlineColor(this->outlineColor);
+
 }
 
 
 //Constructors && Destructors
 
 gui::Counter::Counter()
-	:Entity(nullptr, sf::Vector2f(0.f, 0.f), sf::Vector2f(10.f, 10.f))
+	:Entity(nullptr, sf::Vector2f(0.f, 0.f), sf::Vector2f(10.f, 10.f)),
+	fieldWithZeros(true), fontPercentSize(5.f), value(0)
 {
+
 	//Counter Default Contructor
 }
 
-gui::Counter::Counter(Data* data, sf::Vector2f position, sf::Vector2f sizePercent, sf::Font* font, float fontPercentSize, int defaultValue, bool filedWithZeros,
-						sf::Color backGroundColor, sf::Color textColor, sf::Color outlineColor)
+gui::Counter::Counter(Data* data, sf::Vector2f position, sf::Vector2f sizePercent, 
+					float fontPercentSize, int defaultValue, bool filedWithZeros,
+					sf::Color backGroundColor, sf::Color textColor, sf::Color outlineColor)
 	:Entity(data, position, sizePercent)
 {
 	//init variables
-	this->font = font;
+	this->fontPercentSize = fontPercentSize;
 	this->value = defaultValue;
 	this->backGroundColor = backGroundColor;
 	this->textColor = textColor;
 	this->outlineColor = outlineColor;
-
 
 	this->init();
 }
@@ -330,13 +339,13 @@ gui::Counter::~Counter()
 {
 }
 
-inline void gui::Counter::increase(unsigned amout) 
+void gui::Counter::increase(unsigned amout) 
 {	
 	this->value += amout; 
 	this->text.setString(std::to_string(this->value)); 
 }
 
-inline void gui::Counter::decrease(unsigned amout) 
+void gui::Counter::decrease(unsigned amout) 
 {	
 	this->value -= amout; 
 	this->text.setString(std::to_string(this->value)); 
