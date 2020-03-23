@@ -14,12 +14,15 @@ public:
 	virtual void updateInput(const float& deltaTime);
 	void updateGui();
 	virtual void update(const float& deltaTime);
+	void updateButtons(const float& deltaTime);
 	virtual void render(sf::RenderTarget* target = nullptr);
 private:
 	//variables
 	Minefield* minefield;
 	gui::Counter* counter;
+	gui::Button* restertButton;
 
+	sf::Texture restertButtonImage;
 	sf::RectangleShape BackGround;
 	sf::RectangleShape topBar;
 	sf::RectangleShape selector;

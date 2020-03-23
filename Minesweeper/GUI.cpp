@@ -104,24 +104,27 @@ gui::Button::Button(Data* data, std::string BTNText,
 		));	
 
 	this->shape.setOutlineThickness(this->outlineThickness);
+	this->shape.setOutlineColor(this->BTNOutlineUsedColor);
 
 }
 
-//gui::Button::Button(Settings * settings, std::string imgPath, 
-//	sf::Vector2f position, sf::Vector2f sizePercent, 
-//	sf::Color BTNcolor, sf::Color BTNHoverColor, sf::Color BTNUsedColor, 
-//	sf::Color BTNOutlineColor, sf::Color BTNOutlineHoverColor, sf::Color BTNOutlineUsedColor, float outlineThickness)
-//	: ButtonBaseClass(settings, position, sizePercent, outlineThickness),
-//	BTNcolor(BTNcolor),
-//	BTNHoverColor(BTNHoverColor),
-//	BTNOutlineColor(BTNOutlineColor),
-//	BTNOutlineHoverColor(BTNOutlineHoverColor),
-//	BTNOutlineUsedColor(BTNOutlineUsedColor)
-//
-//
-//{
-//	this->init();
-//}
+gui::Button::Button(Data* data, sf::Texture* texture,
+	sf::Vector2f position, sf::Vector2f sizePercent, 
+	sf::Color BTNcolor, sf::Color BTNHoverColor, sf::Color BTNUsedColor, 
+	sf::Color BTNOutlineColor, sf::Color BTNOutlineHoverColor, sf::Color BTNOutlineUsedColor, float outlineThickness)
+	: ButtonBaseClass(data, position, sizePercent, outlineThickness),
+	texture(texture),
+	BTNcolor(BTNcolor),
+	BTNHoverColor(BTNHoverColor),
+	BTNOutlineColor(BTNOutlineColor),
+	BTNOutlineHoverColor(BTNOutlineHoverColor),
+	BTNOutlineUsedColor(BTNOutlineUsedColor)
+
+
+{
+	this->init();
+	this->shape.setTexture(this->texture);
+}
 
 
 gui::Button::~Button()

@@ -91,17 +91,17 @@ namespace gui
 			float outlineThickness = 0);
 
 		//Button with img
-		//Button(Settings* settings,
-		//	std::string imgPath,
-		//	sf::Vector2f position = sf::Vector2f(0.f, 0.f),
-		//	sf::Vector2f sizePercent = sf::Vector2f(15.f, 5.f),
-		//	sf::Color BTNcolor = sf::Color(0, 0, 0, 255),
-		//	sf::Color BTNHoverColor = sf::Color(0, 0, 0, 255),
-		//	sf::Color BTNUsedColor = sf::Color(0, 0, 0, 255),
-		//	sf::Color BTNOutlineColor = sf::Color(0, 0, 0, 255),
-		//	sf::Color BTNOutlineHoverColor = sf::Color(0, 0, 0, 255),
-		//	sf::Color BTNOutlineUsedColor = sf::Color(0, 0, 0, 255),
-		//	float outlineThickness = 0);
+		Button(Data* data,
+			sf::Texture* texture,
+			sf::Vector2f position = sf::Vector2f(0.f, 0.f),
+			sf::Vector2f sizePercent = sf::Vector2f(15.f, 5.f),
+			sf::Color BTNcolor = sf::Color(0, 0, 0, 255),
+			sf::Color BTNHoverColor = sf::Color(0, 0, 0, 200),
+			sf::Color BTNUsedColor = sf::Color(0, 0, 0, 255),
+			sf::Color BTNOutlineColor = sf::Color(0, 0, 0, 255),
+			sf::Color BTNOutlineHoverColor = sf::Color(0, 0, 0, 255),
+			sf::Color BTNOutlineUsedColor = sf::Color(0, 0, 0, 255),
+			float outlineThickness = 0);
 
 		virtual ~Button();
 
@@ -122,7 +122,7 @@ namespace gui
 	private:
 		//Variables
 		sf::Text text;
-
+		sf::Texture* texture;
 		sf::Color BTNcolor;
 		sf::Color BTNHoverColor;
 		sf::Color BTNUsedColor;

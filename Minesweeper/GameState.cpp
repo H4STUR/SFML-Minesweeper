@@ -25,6 +25,15 @@ void GameState::init()
 
 	//counter test
 	this->counter = new gui::Counter(this->data, sf::Vector2f(15.f, 15.f), sf::Vector2f(6.f, 4.f), 2.f, 69);
+
+	//restert button 
+	if (this->restertButtonImage.loadFromFile("assets/leny.png"))
+	{
+		this->restertButton = new gui::Button(this->data, &this->restertButtonImage,
+			sf::Vector2f(9.f, 2.f), sf::Vector2f(8.f, 6.f) );
+	}
+	else
+		std::cout << "Cannot load restertButtonImage :: GameState :: Init() \n";
 }
 
 void GameState::initGui()
@@ -71,6 +80,7 @@ GameState::~GameState()
 {
 	delete this->minefield;
 	delete this->counter;
+	delete this->restertButton;
 }
 
 void GameState::updateInput(const float& deltaTime)
@@ -104,9 +114,20 @@ void GameState::updateGui()
 void GameState::update(const float& deltaTime)
 {
 	this->updateInput(deltaTime);
+	this->updateButtons(deltaTime);
 	this->updateMousePos(nullptr, this->grid);
 	this->updateKeytime(deltaTime);
 	this->updateGui();
+}
+
+void GameState::updateButtons(const float& deltaTime)
+{
+	this->restertButton->update(this->mousePosWindow);
+
+	if (this->restertButton->pressed() && this->getKeytime())
+	{
+		std::cout << "\n RESTERT BUTTON PRESSED\n";
+	}
 }
 
 void GameState::render(sf::RenderTarget* target)
@@ -120,6 +141,7 @@ void GameState::render(sf::RenderTarget* target)
 
 	//counter
 	this->counter->render(target);
+	this->restertButton->render(target);
 }
 
 

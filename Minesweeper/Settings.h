@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "State.h"
 
-class Settings;
 class Data;
 class State;
 
