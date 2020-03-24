@@ -146,9 +146,9 @@ void gui::Button::setID(short unsigned id)
 	this->id = id;
 }
 
-const std::string & gui::Button::getButtonText() const
+const sf::Text & gui::Button::getButtonText() const
 {
-	return this->text.getString();
+	return this->text;
 }
 
 void gui::Button::setButtonText(std::string buttonText)
@@ -284,7 +284,9 @@ void gui::MultiDimensionalButton::render(sf::RenderTarget * target)
 void gui::Counter::init()
 {
 	//frame && background
-	this->background.setPosition(this->position);
+	this->background.setPosition(sf::Vector2f(
+		this->data->PercentSizeX(this->position.x),
+		this->data->PercentSizeY(this->position.y)));
 
 	this->background.setSize(sf::Vector2f(
 		this->data->PercentSizeX(this->sizePercent.x),
@@ -364,4 +366,60 @@ void gui::Counter::render(sf::RenderTarget* target)
 	target->draw(this->background);
 	target->draw(this->text);
 }
+
+
+
+		// TIMER
+
+//Inits
+void gui::Timer::init()
+{
+	this->active = false;
+	this->text.setString("0");
+	//this->clock.restart;
+}
+
+
+//Constructos && Destructors
+
+gui::Timer::Timer(Data* data, sf::Vector2f position, sf::Vector2f sizePercent, float fontPercentSize)
+	:Counter(data, position, sizePercent, fontPercentSize)
+{
+	this->init();
+}
+
+gui::Timer::~Timer()
+{
+}
+
+const bool& gui::Timer::getActive() const
+{
+	return this->active;
+}
+
+const sf::Time& gui::Timer::getTime() const
+{
+	return this->time;
+}
+
+void gui::Timer::resetTimer()
+{
+	this->clock.restart();
+}
+
+void gui::Timer::switchActive()
+{
+	this->active = !this->active;
+}
+
+//Functions
+void gui::Timer::update()
+{
+	if (this->active)
+	{
+		this->time = clock.getElapsedTime();
+		this->text.setString(std::to_string(this->time.asSeconds()));
+	}
+}
+
 

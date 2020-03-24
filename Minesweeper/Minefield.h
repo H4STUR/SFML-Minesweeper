@@ -22,7 +22,7 @@ public:
 
 private:
 	//Variables
-	unsigned layers;
+	int layers;
 	sf::Vector2i size;
 	sf::Vector2f position;
 	sf::RectangleShape selector;

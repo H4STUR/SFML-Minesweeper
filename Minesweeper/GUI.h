@@ -107,13 +107,13 @@ namespace gui
 
 		//Setters
 		void setID(short unsigned id);
-		const std::string & getButtonText() const;
 		void setButtonText(std::string buttonText);
 		void setTextPosition(sf::Vector2f position);
 
 		//Accessors
 		const sf::FloatRect & getTextBlounds() const;
 		const short unsigned & getID() const;
+		const sf::Text& getButtonText() const;
 
 		//Functions
 		virtual void update(const sf::Vector2i mousePosWindow);
@@ -208,7 +208,7 @@ namespace gui
 
 		virtual void render(sf::RenderTarget* target);
 
-	private:
+	protected:
 
 		//variables
 		sf::Text text;
@@ -222,9 +222,39 @@ namespace gui
 		bool fieldWithZeros;
 		float fontPercentSize;
 
+	private:
+
 		//inits
 		void init();
 	};
 
+	class Timer : public Counter
+	{
+	public:
+		Timer(Data* data, sf::Vector2f position, sf::Vector2f sizePercent, float fontPercentSize);
+		~Timer();
+
+		//Accessors
+		const bool& getActive() const;
+		const sf::Time& getTime() const;
+
+		//Modifiers
+		void resetTimer();
+		void switchActive();
+
+		//functions
+		void update();
+
+	private:
+		//variables
+		sf::Clock clock;
+		sf::Time time;
+		sf::Time lastTime;
+
+		bool active;
+
+		//Inits
+		void init();
+	};
 }
 #endif //!_GUI

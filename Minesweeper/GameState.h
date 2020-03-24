@@ -20,6 +20,7 @@ private:
 	//variables
 	Minefield* minefield;
 	gui::Counter* counter;
+	gui::Timer* timer;
 	gui::Button* restertButton;
 
 	sf::Texture restertButtonImage;
@@ -30,10 +31,15 @@ private:
 	sf::Vector2i fieldSize;
 	sf::Vector2f fieldPosition;
 
+	sf::Time currentTime;
+	sf::Time bestTime;
+
 	//
 	float grid;
 	float padding;
 	float topBarHeight;
+
+	bool gameStarted;
 
 	//Inits
 	void init();

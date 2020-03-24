@@ -3,14 +3,18 @@
 void GameState::resizeWindow()
 {
 	this->data->Resize(sf::VideoMode(
-		(this->fieldSize.x * this->grid) + this->padding *2,
-		(this->fieldSize.y * this->grid) + (this->padding *2) + this->topBarHeight
+		static_cast<unsigned int>((this->fieldSize.x * this->grid) + this->padding *2),
+		static_cast<unsigned int>((this->fieldSize.y * this->grid) + (this->padding *2) + this->topBarHeight)
 	));
+
+	//remember to fix data->percentSize cuz it doesnt change value properly after resizing
 }
 
 //Inits
 void GameState::init()
 {
+	this->gameStarted = false;
+
 	//width and height of single tile
 	this->grid = 25;
 
@@ -24,7 +28,7 @@ void GameState::init()
 	this->fieldPosition = sf::Vector2f(this->padding, this->topBarHeight + this->padding);
 
 	//counter test
-	this->counter = new gui::Counter(this->data, sf::Vector2f(15.f, 15.f), sf::Vector2f(6.f, 4.f), 2.f, 69);
+	this->counter = new gui::Counter(this->data, sf::Vector2f(5.f, 5.f), sf::Vector2f(6.f, 4.f), 2.f, 69);
 
 	//restert button 
 	if (this->restertButtonImage.loadFromFile("assets/leny.png"))
@@ -34,6 +38,9 @@ void GameState::init()
 	}
 	else
 		std::cout << "Cannot load restertButtonImage :: GameState :: Init() \n";
+
+	//Timer
+	this->timer = new gui::Timer(this->data, sf::Vector2f(20.f, 5.f), sf::Vector2f(6.f, 4.f), 2.f);
 }
 
 void GameState::initGui()
@@ -81,6 +88,7 @@ GameState::~GameState()
 	delete this->minefield;
 	delete this->counter;
 	delete this->restertButton;
+	delete this->timer;
 }
 
 void GameState::updateInput(const float& deltaTime)
@@ -93,7 +101,14 @@ void GameState::updateInput(const float& deltaTime)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && this->getKeytime())
 	{
-		this->counter->increase();
+		//this->counter->increase();
+		this->timer->resetTimer();
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && this->getKeytime())
+	{
+		//this->counter->increase();
+		this->timer->switchActive();
 	}
 }
 
@@ -109,6 +124,8 @@ void GameState::updateGui()
 			this->mousePosGrid.x * this->grid + this->padding,
 			this->mousePosGrid.y * this->grid + this->padding));
 	}
+
+	if(this->timer->getActive()) this->timer->update();
 }
 
 void GameState::update(const float& deltaTime)
@@ -136,12 +153,13 @@ void GameState::render(sf::RenderTarget* target)
 	target->draw(this->topBar);
 	this->minefield->render(target);
 	
-	//Gselector
+	//selector
 	target->draw(this->selector);
 
 	//counter
 	this->counter->render(target);
 	this->restertButton->render(target);
+	this->timer->render(target);
 }
 
 

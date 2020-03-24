@@ -93,7 +93,7 @@ void Game::update()
 
 			case sf::Event::Resized:
 			{
-				sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+				sf::FloatRect visibleArea(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height));
 				window->setView(sf::View(visibleArea));
 			}break;
 		}
