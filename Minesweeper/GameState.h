@@ -4,6 +4,13 @@
 #include "State.h"
 #include "Minefield.h"
 
+enum difficulty
+{
+	easy = 0,
+	medium,
+	hard
+};
+
 class GameState : public State
 {
 public:
@@ -21,9 +28,9 @@ private:
 	Minefield* minefield;
 	gui::Counter* counter;
 	gui::Timer* timer;
-	gui::Button* restertButton;
+	gui::Button* restartButton;
 
-	sf::Texture restertButtonImage;
+	sf::Texture restartButtonImage;
 	sf::RectangleShape BackGround;
 	sf::RectangleShape topBar;
 	sf::RectangleShape selector;

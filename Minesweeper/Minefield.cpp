@@ -5,23 +5,24 @@ void Minefield::initField()
 {
 	////	initializing and resizing minefield
 
-	this->field.reserve(5);
+	this->field.reserve(this->size.x);
 	for (int x = 0; x < this->size.x; x++)
 	{
-		this->field.emplace_back(std::vector< std::vector<Tile*> >());
+		this->field.emplace_back(std::vector< std::stack<Tile*> >());
 
+		this->field[x].reserve(this->size.y);
 		for (int y = 0; y < this->size.y; y++)
 		{
-			this->field[x].reserve(5);
-			this->field[x].emplace_back(std::vector<Tile* >());
+			this->field[x].emplace_back( std::stack<Tile* >());
 
-			for (int z = 0; z < this->layers; z++)
-			{
-				this->field[x][y].reserve(3);
-				this->field[x][y].emplace_back(new Tile(this->grid, sf::Vector2f(
-														(this->grid * x) + position.x, 
-														(this->grid * y) + position.y)));
-			}
+			//adding tiles to stack
+			this->field[x][y].push(new Tile(this->grid, sf::Vector2f(
+												(this->grid * x) + position.x,
+												(this->grid * y) + position.y), tileType::empty));
+
+			this->field[x][y].push(new Tile(this->grid, sf::Vector2f(
+										(this->grid * x) + position.x,
+										(this->grid * y) + position.y), 9));
 		}
 	}
 	
@@ -34,8 +35,6 @@ Minefield::Minefield(float grid, sf::Vector2i& size, sf::Vector2f& position)
 	this->layers = 3;
 	this->grid = grid;
 	this->initField();
-	//std::cout << "\n" << this->field.size() << "\n" << this->field[0].size() << "\n" << this->field[0][0].size();
-	//std::cout << "\n" << this->size.x << "\n" << this->size.y;
 }
 
 Minefield::~Minefield()
@@ -43,12 +42,27 @@ Minefield::~Minefield()
 	this->clear();
 }
 
-void Minefield::setFlag()
+void Minefield::setFlag(int x, int y)
 {
+	if (this->field[x][y].top()->getType() == tileType::full)
+	{
+		this->field[x][y].push(new Tile(this->grid, sf::Vector2f(
+									(this->grid * x) + position.x,
+									(this->grid * y) + position.y), tileType::flag));
+		std::cout << "\nFLAG PLACED";
+	}
+
+
 }
 
-void Minefield::openTile()
+void Minefield::openTile(int x, int y)
 {
+	if (this->field[x][y].size() > 1)
+	{
+		delete this->field[x][y].top();
+		this->field[x][y].pop();
+	}
+	std::cout << "\n" << this->field[x][y].size() << "\n";
 }
 
 void Minefield::update(const float& deltaTime)
@@ -57,30 +71,27 @@ void Minefield::update(const float& deltaTime)
 
 const void Minefield::render(sf::RenderTarget* target)
 {
-	for (auto &x : this->field)
+	for (int x = 0; x < this->field.size(); x++)
 	{
-		for (auto &y : x)
+		for (int y = 0; y < this->field[x].size(); y++)
 		{
-			for (auto& z : y)
-			{
-				z->render(target);
-			}
+			this->field[x][y].top()->render(target);
 		}
 	}
 }
 
 void Minefield::clear()
 {
-	for (auto& x : this->field)
+
+	for (int x = 0; x < this->field.size(); x++)
 	{
-		for (auto& y : x)
+		for (int y = 0; y < this->field[x].size(); y++)
 		{
-			for (auto& z : y)
+			while (!this->field[x][y].empty())
 			{
-				delete z;
+				delete this->field[x][y].top();
+				this->field[x][y].pop();
 			}
-			y.clear();
 		}
-		x.clear();
 	}
 }

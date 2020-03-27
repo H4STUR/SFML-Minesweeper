@@ -26,21 +26,6 @@ void GameState::init()
 
 	//position of mine field
 	this->fieldPosition = sf::Vector2f(this->padding, this->topBarHeight + this->padding);
-
-	//counter test
-	this->counter = new gui::Counter(this->data, sf::Vector2f(5.f, 5.f), sf::Vector2f(6.f, 4.f), 2.f, 69);
-
-	//restert button 
-	if (this->restertButtonImage.loadFromFile("assets/leny.png"))
-	{
-		this->restertButton = new gui::Button(this->data, &this->restertButtonImage,
-			sf::Vector2f(9.f, 2.f), sf::Vector2f(8.f, 6.f) );
-	}
-	else
-		std::cout << "Cannot load restertButtonImage :: GameState :: Init() \n";
-
-	//Timer
-	this->timer = new gui::Timer(this->data, sf::Vector2f(20.f, 5.f), sf::Vector2f(6.f, 4.f), 2.f);
 }
 
 void GameState::initGui()
@@ -70,6 +55,25 @@ void GameState::initGui()
 		this->selector.setOutlineThickness(-1);
 		this->selector.setOutlineColor(sf::Color::Black);
 	}
+
+	// field gui
+
+	//counter test
+	this->counter = new gui::Counter(this->data, sf::Vector2f(5.f, 5.f), sf::Vector2f(18.f, 18.f), 4.f, 00);
+
+
+	//restert button 
+	if (this->restartButtonImage.loadFromFile("assets/leny.png"))
+	{
+		//REBUID GUI TO SET SIZE NOT BY PERCENT VALUE BY DEFAULT!!!
+		this->restartButton = new gui::Button(this->data, &this->restartButtonImage,
+			sf::Vector2f(9.f, 2.f), sf::Vector2f(this->topBar.getSize().y, this->topBar.getSize().y));
+	}
+	else
+		std::cout << "Cannot load restertButtonImage :: GameState :: Init() \n";
+
+	//Timer
+	this->timer = new gui::Timer(this->data, sf::Vector2f(20.f, 5.f), sf::Vector2f(6.f, 4.f), 2.f);
 }
 
 //Constructors && Destructors
@@ -87,7 +91,7 @@ GameState::~GameState()
 {
 	delete this->minefield;
 	delete this->counter;
-	delete this->restertButton;
+	delete this->restartButton;
 	delete this->timer;
 }
 
@@ -110,6 +114,17 @@ void GameState::updateInput(const float& deltaTime)
 		//this->counter->increase();
 		this->timer->switchActive();
 	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->getKeytime())
+	{
+		this->minefield->openTile(this->mousePosGrid.x, (this->mousePosGrid.y - 2));
+	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->getKeytime())
+	{
+		this->minefield->setFlag(this->mousePosGrid.x, (this->mousePosGrid.y - 2));
+	}
+
 }
 
 void GameState::updateGui()
@@ -125,7 +140,7 @@ void GameState::updateGui()
 			this->mousePosGrid.y * this->grid + this->padding));
 	}
 
-	if(this->timer->getActive()) this->timer->update();
+	this->timer->update();
 }
 
 void GameState::update(const float& deltaTime)
@@ -139,9 +154,9 @@ void GameState::update(const float& deltaTime)
 
 void GameState::updateButtons(const float& deltaTime)
 {
-	this->restertButton->update(this->mousePosWindow);
+	this->restartButton->update(this->mousePosWindow);
 
-	if (this->restertButton->pressed() && this->getKeytime())
+	if (this->restartButton->pressed() && this->getKeytime())
 	{
 		std::cout << "\n RESTERT BUTTON PRESSED\n";
 	}
@@ -158,7 +173,7 @@ void GameState::render(sf::RenderTarget* target)
 
 	//counter
 	this->counter->render(target);
-	this->restertButton->render(target);
+	this->restartButton->render(target);
 	this->timer->render(target);
 }
 

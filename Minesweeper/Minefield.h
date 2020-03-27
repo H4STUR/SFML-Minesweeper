@@ -13,8 +13,8 @@ public:
 	~Minefield();
 
 	//Functions
-	void setFlag();
-	void openTile();
+	void setFlag(int x, int y);
+	void openTile(int x, int y);
 
 	//void updateGui(const float& deltaTime);
 	void update(const float& deltaTime);
@@ -26,7 +26,7 @@ private:
 	sf::Vector2i size;
 	sf::Vector2f position;
 	sf::RectangleShape selector;
-	std::vector < std::vector< std::vector<Tile*> > >field;
+	std::vector < std::vector< std::stack<Tile*> > >field;
 	float grid;
 
 	//functions
