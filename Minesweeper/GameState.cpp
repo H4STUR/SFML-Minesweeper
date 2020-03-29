@@ -59,21 +59,29 @@ void GameState::initGui()
 	// field gui
 
 	//counter test
-	this->counter = new gui::Counter(this->data, sf::Vector2f(5.f, 5.f), sf::Vector2f(18.f, 18.f), 4.f, 00);
+	this->counter = new gui::Counter(
+		this->data->PercentSize(75.f, 3.f), 
+		sf::Vector2f(this->data->PercentSizeX(20.f), 
+			this->topBar.getSize().y * 0.75f), 
+		this->data->PercentSizeY(8.f), this->data->font, 0);
 
 
 	//restert button 
 	if (this->restartButtonImage.loadFromFile("assets/leny.png"))
 	{
 		//REBUID GUI TO SET SIZE NOT BY PERCENT VALUE BY DEFAULT!!!
-		this->restartButton = new gui::Button(this->data, &this->restartButtonImage,
-			sf::Vector2f(9.f, 2.f), sf::Vector2f(this->topBar.getSize().y, this->topBar.getSize().y));
+		this->restartButton = new gui::Button(&this->restartButtonImage,
+			this->data->PercentSize(25.f, 3.f), sf::Vector2f(this->topBar.getSize().y * 2, this->topBar.getSize().y));
 	}
 	else
 		std::cout << "Cannot load restertButtonImage :: GameState :: Init() \n";
 
 	//Timer
-	this->timer = new gui::Timer(this->data, sf::Vector2f(20.f, 5.f), sf::Vector2f(6.f, 4.f), 2.f);
+	this->timer = new gui::Timer(
+		this->data->PercentSize(5.f, 3.f), 
+		sf::Vector2f(this->data->PercentSizeX(20.f), 
+		this->topBar.getSize().y * 0.75f), 
+		this->data->PercentSizeY(8.f), this->data->font);
 }
 
 //Constructors && Destructors
@@ -97,6 +105,8 @@ GameState::~GameState()
 
 void GameState::updateInput(const float& deltaTime)
 {
+	
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && this->getKeytime())
 	{
 		this->data->Resize(this->data->defaultResolution);
@@ -105,24 +115,31 @@ void GameState::updateInput(const float& deltaTime)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && this->getKeytime())
 	{
-		//this->counter->increase();
+		this->counter->increase();
 		this->timer->resetTimer();
+		std::cout<<"\nXD" << this->counter->getValue();
+		
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && this->getKeytime())
 	{
-		//this->counter->increase();
+		this->counter->increase();
 		this->timer->switchActive();
 	}
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->getKeytime())
+	if (this->minefield->contains(this->mousePosView))
 	{
-		this->minefield->openTile(this->mousePosGrid.x, (this->mousePosGrid.y - 2));
-	}
+		
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->getKeytime())
+		{
+			this->minefield->openTile(this->mousePosGrid.x, (this->mousePosGrid.y - 2));
+		}
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->getKeytime())
-	{
-		this->minefield->setFlag(this->mousePosGrid.x, (this->mousePosGrid.y - 2));
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->getKeytime())
+		{
+
+			this->minefield->setFlag(this->mousePosGrid.x, (this->mousePosGrid.y - 2));
+		}
 	}
 
 }
@@ -131,9 +148,7 @@ void GameState::updateGui()
 {
 	//sets selector on tiles
 
-	if (this->mousePosView.y > this->topBarHeight &&
-		this->mousePosGrid.x < this->fieldSize.x &&
-		this->mousePosGrid.x >= 0)
+	if(this->minefield->contains(this->mousePosView))
 	{
 		this->selector.setPosition(sf::Vector2f(
 			this->mousePosGrid.x * this->grid + this->padding,

@@ -29,6 +29,11 @@ public:
 		return static_cast<float>((y * this->resolution.height) / 100);
 	}
 
+	inline sf::Vector2f PercentSize(float x, float y)
+	{
+		return sf::Vector2f(this->PercentSizeX(x), this->PercentSizeY(y));
+	}
+
 	inline float getPercent(const float& value, const float percent)
 	{
 		return ((percent / 100) * value);

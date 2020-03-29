@@ -2,16 +2,21 @@
 #define _GUI
 
 #include "stdafx.h"
-#include "Settings.h"
-
-//Forward declarations
-class Data;
 
 enum ButtonStates
 {
 	Default = 0,
 	Hover,
 	Active
+};
+
+enum class Align
+{
+	Center = 0,
+	Right,
+	Left,
+	Top,
+	Bottom
 };
 
 namespace gui
@@ -23,41 +28,40 @@ namespace gui
 	class MultiDimensionalButton;
 	class DropDownList;
 	class Counter;
+	class Timer;
+
 
 	//Base class
 	class Entity
 	{
 	public:
-		Entity(Data* data,
-			   sf::Vector2f position, sf::Vector2f sizePercent);
+		Entity(sf::Vector2f position, sf::Vector2f size);
 		virtual ~Entity() {}
 
+	protected:
 		//Functions
+		sf::Vector2f align(sf::FloatRect objectBounds, Align&& state);
+		sf::Vector2f align(sf::Vector2f& position, sf::FloatRect&& bounds, sf::FloatRect&& objectBounds, Align&& state);
+
+		sf::Text createText(std::string textString = "Text", sf::Font* font = nullptr, float fontSize = 5.f, Align&& state = Align::Center);
 		virtual void render(sf::RenderTarget* target) = 0;
 
-	protected:
 		//variables
-		Data* data;
 		sf::RectangleShape shape;
 		sf::Vector2f position;
-		sf::Vector2f sizePercent;
-		sf::FloatRect shapeBounds;
-		sf::FloatRect textBounds;
+		sf::Vector2f size;
 	};
 
 	class ButtonBaseClass : public Entity
 	{
 	public:
-		ButtonBaseClass(Data* data,
-			sf::Vector2f position, sf::Vector2f sizePercent, float outlineThickness);
+		ButtonBaseClass(sf::Vector2f position, sf::Vector2f size, float outlineThickness);
 		virtual ~ButtonBaseClass() {}
 
 		//Accessors
 		const bool pressed() const;
 		const sf::Vector2f & getPosition() const;
-		const sf::Vector2f & getSizePercent() const;
 		const sf::Vector2f & getSize() const;
-		const sf::FloatRect & getShapeBounds() const;
 		void setPosition(sf::Vector2f position);
 
 		//Functions
@@ -74,11 +78,11 @@ namespace gui
 	{
 	public:
 		//Button with text
-		Button(Data* data,
-			std::string BTNText = "BUTTON",
-			float fontPercentSize = 2.5f,
+		Button(std::string BTNText = "BUTTON",
+			float fontSize = 2.5f,
+			sf::Font* font = nullptr,
 			sf::Vector2f position = sf::Vector2f(0.f, 0.f),
-			sf::Vector2f sizePercent = sf::Vector2f(15.f, 5.f),
+			sf::Vector2f size = sf::Vector2f(15.f, 5.f),
 			sf::Color BTNcolor = sf::Color(0, 0, 0, 255), 
 			sf::Color BTNHoverColor = sf::Color(0, 0, 0, 255), 
 			sf::Color BTNUsedColor = sf::Color(0, 0, 0, 255), 
@@ -91,10 +95,9 @@ namespace gui
 			float outlineThickness = 0);
 
 		//Button with img
-		Button(Data* data,
-			sf::Texture* texture,
+		Button(sf::Texture* texture,
 			sf::Vector2f position = sf::Vector2f(0.f, 0.f),
-			sf::Vector2f sizePercent = sf::Vector2f(15.f, 5.f),
+			sf::Vector2f size = sf::Vector2f(15.f, 5.f),
 			sf::Color BTNcolor = sf::Color(0, 0, 0, 255),
 			sf::Color BTNHoverColor = sf::Color(0, 0, 0, 200),
 			sf::Color BTNUsedColor = sf::Color(0, 0, 0, 255),
@@ -111,7 +114,6 @@ namespace gui
 		void setTextPosition(sf::Vector2f position);
 
 		//Accessors
-		const sf::FloatRect & getTextBlounds() const;
 		const short unsigned & getID() const;
 		const sf::Text& getButtonText() const;
 
@@ -123,6 +125,7 @@ namespace gui
 		//Variables
 		sf::Text text;
 		sf::Texture* texture;
+		sf::Font* font;
 		sf::Color BTNcolor;
 		sf::Color BTNHoverColor;
 		sf::Color BTNUsedColor;
@@ -135,7 +138,7 @@ namespace gui
 		sf::Color BTNOutlineHoverColor;
 		sf::Color BTNOutlineUsedColor;
 
-		float fontPercentSize;
+		float fontSize;
 		short unsigned id;
 		short numChars;
 
@@ -148,7 +151,7 @@ namespace gui
 	{
 	public:
 		//Constructors
-		MultiDimensionalButton(Data* data, Button* baseButton,
+		MultiDimensionalButton(Button* baseButton,
 			ButtonBaseClass* downButton = nullptr,
 			ButtonBaseClass* upButton = nullptr,
 			ButtonBaseClass* rightButton = nullptr,
@@ -192,7 +195,7 @@ namespace gui
 	{
 	public:
 		Counter();
-		Counter(Data* data, sf::Vector2f position, sf::Vector2f sizePercent, float fontPercentSize, int defaultValue = 0, bool filedWithZeros = true,
+		Counter(sf::Vector2f position, sf::Vector2f size, float fontSize, sf::Font* font, int defaultValue = 0, bool filedWithZeros = true,
 			sf::Color backGroundColor = sf::Color(60, 60, 60, 255),
 			sf::Color textColor = sf::Color(0, 0, 0, 255),
 			sf::Color outlineColor = sf::Color(0, 0, 0, 255));
@@ -213,14 +216,14 @@ namespace gui
 		//variables
 		sf::Text text;
 
-		sf::RectangleShape background;
 		sf::Color backGroundColor;
 		sf::Color textColor;
 		sf::Color outlineColor;
+		sf::Font* font;
 
 		int value;
 		bool fieldWithZeros;
-		float fontPercentSize;
+		float fontSize;
 
 	private:
 
@@ -231,7 +234,7 @@ namespace gui
 	class Timer : public Counter
 	{
 	public:
-		Timer(Data* data, sf::Vector2f position, sf::Vector2f sizePercent, float fontPercentSize);
+		Timer(sf::Vector2f position, sf::Vector2f size, float fontSize, sf::Font* font = nullptr);
 		~Timer();
 
 		//Accessors

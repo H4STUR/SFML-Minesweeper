@@ -61,8 +61,8 @@ void MainMenuState::initButtons()
 {
 	//Easy button
 	this->button =
-		std::make_pair("EASY", new gui::Button(this->data, "EASY", 4.f,
-			sf::Vector2f(35.f, 10.f), sf::Vector2f(30.f, 15.f),
+		std::make_pair("EASY", new gui::Button("EASY", this->data->PercentSizeY(4.f), this->data->font,
+			this->data->PercentSize(35.f, 10.f), this->data->PercentSize(30.f, 15.f),
 			sf::Color(69, 69, 69, 255), sf::Color(169, 169, 169, 255), sf::Color(20, 20, 20, 255),
 			sf::Color(20, 20, 20, 255), sf::Color(69, 69, 69, 255), sf::Color(0, 0, 0, 255)));
 
@@ -70,8 +70,8 @@ void MainMenuState::initButtons()
 
 	//Easy button
 	this->button =
-		std::make_pair("MEDIUM", new gui::Button(this->data, "MEDIUM", 4.f,
-			sf::Vector2f(35.f, 30.f), sf::Vector2f(30.f, 15.f),
+		std::make_pair("MEDIUM", new gui::Button("MEDIUM", this->data->PercentSizeY(4.f), this->data->font,
+			this->data->PercentSize(35.f, 30.f), this->data->PercentSize(30.f, 15.f),
 			sf::Color(69, 69, 69, 255), sf::Color(169, 169, 169, 255), sf::Color(20, 20, 20, 255),
 			sf::Color(20, 20, 20, 255), sf::Color(69, 69, 69, 255), sf::Color(0, 0, 0, 255)));
 
@@ -79,8 +79,8 @@ void MainMenuState::initButtons()
 
 	//Easy button
 	this->button =
-		std::make_pair("HARD", new gui::Button(this->data, "HARD", 4.f,
-			sf::Vector2f(35.f, 50.f), sf::Vector2f(30.f, 15.f),
+		std::make_pair("HARD", new gui::Button("HARD", this->data->PercentSizeY(4.f), this->data->font,
+			this->data->PercentSize(35.f, 50.f), this->data->PercentSize(30.f, 15.f),
 			sf::Color(69, 69, 69, 255), sf::Color(169, 169, 169, 255), sf::Color(20, 20, 20, 255),
 			sf::Color(20, 20, 20, 255), sf::Color(69, 69, 69, 255), sf::Color(0, 0, 0, 255)));
 
@@ -88,8 +88,8 @@ void MainMenuState::initButtons()
 
 	//EXIT button
 	this->button =
-		std::make_pair("EXIT", new gui::Button(this->data, "EXIT", 4.f,
-			sf::Vector2f(35.f, 70.f), sf::Vector2f(30.f, 15.f),
+		std::make_pair("EXIT", new gui::Button("EXIT", this->data->PercentSizeY(4.f), this->data->font,
+			this->data->PercentSize(35.f, 70.f), this->data->PercentSize(30.f, 15.f),
 			sf::Color(69, 69, 69, 255), sf::Color(169, 169, 169, 255), sf::Color(20, 20, 20, 255),
 			sf::Color(20, 20, 20, 255), sf::Color(69, 69, 69, 255), sf::Color(0, 0, 0, 255)));
 
@@ -113,8 +113,6 @@ MainMenuState::~MainMenuState()
 {
 	for (auto &i : this->buttons)
 		delete i.second;
-
-
 }
 
 //Functions

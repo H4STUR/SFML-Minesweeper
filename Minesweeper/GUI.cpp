@@ -2,17 +2,84 @@
 #include "GUI.h"
 
 //Base calss
-gui::Entity::Entity(Data * data, sf::Vector2f position, sf::Vector2f sizePercent)
-	: data(data),  position(position), sizePercent(sizePercent) {}
+gui::Entity::Entity(sf::Vector2f position, sf::Vector2f size)
+	:position(position), size(size) {}
+
+sf::Vector2f gui::Entity::align(sf::FloatRect objectBounds, Align&& state)
+{
+	return this->align(this->position, this->shape.getGlobalBounds(), std::forward<sf::FloatRect>(objectBounds), std::forward<Align>(state));
+}
+
+sf::Vector2f gui::Entity::align(sf::Vector2f& position, sf::FloatRect&& groundBounds, sf::FloatRect&& objectBounds, Align&& state)
+{
+	switch (state)
+	{
+		case Align::Center:
+		{
+			return sf::Vector2f(
+				position.x + groundBounds.width - (groundBounds.width / 2.f) - (objectBounds.width / 2),
+				position.y + groundBounds.height - (groundBounds.height / 2.f) - (objectBounds.height)
+				);
+		}break;
+
+		case Align::Right:
+		{
+			return sf::Vector2f(
+				position.x + (groundBounds.width - objectBounds.width),
+				position.y + groundBounds.height - (groundBounds.height / 2.f) - (objectBounds.height)
+				);
+		}break;
+
+		case Align::Left:
+		{
+			return sf::Vector2f(
+				position.x,
+				position.y + groundBounds.height - (groundBounds.height / 2.f) - (objectBounds.height)
+				);
+		}break;
+
+		case Align::Top:
+		{
+			return sf::Vector2f(
+				position.x + groundBounds.width - (groundBounds.width / 2.f) - (objectBounds.width / 2),
+				position.y
+				);
+		}break;
+
+		case Align::Bottom:
+		{
+			return sf::Vector2f(
+				position.x + groundBounds.width - (groundBounds.width / 2.f) - (objectBounds.width / 2),
+				position.y + (groundBounds.height - objectBounds.height*2)
+				);
+		}break;
+
+		default:
+		{
+			std::cout << "\n gui::Entity::align error\n";
+			return sf::Vector2f();
+		}break;
+	}
+}
+
+sf::Text gui::Entity::createText(std::string textString, sf::Font* font, float fontSize, Align&& state)
+{
+	sf::Text text;
+	text.setFont(*font);
+	text.setString(textString);
+	text.setCharacterSize(static_cast<unsigned int>(fontSize));
+	text.setPosition(this->align(text.getGlobalBounds(), std::forward<Align>(state)));
+
+	return text;
+}
 
 
 //Base class for buttons
-gui::ButtonBaseClass::ButtonBaseClass(Data* data, sf::Vector2f position, sf::Vector2f sizePercent, float outlineThickness)
-	: Entity(data, position, sizePercent) 
+gui::ButtonBaseClass::ButtonBaseClass(sf::Vector2f position, sf::Vector2f sizePercent, float outlineThickness)
+	: Entity(position, sizePercent) 
 { 
 	this->buttonState = 0;
 	this->outlineThickness = outlineThickness;
-	this->shapeBounds = this->shape.getGlobalBounds();
 }
 
 const bool gui::ButtonBaseClass::pressed() const
@@ -26,19 +93,9 @@ const sf::Vector2f & gui::ButtonBaseClass::getPosition() const
 	return this->position;
 }
 
-const sf::Vector2f & gui::ButtonBaseClass::getSizePercent() const
-{
-	return this->sizePercent;
-}
-
 const sf::Vector2f& gui::ButtonBaseClass::getSize() const
 {
-	return this->sizePercent;
-}
-
-const sf::FloatRect& gui::ButtonBaseClass::getShapeBounds() const
-{
-	return this->shapeBounds;
+	return this->size;
 }
 
 void gui::ButtonBaseClass::setPosition(sf::Vector2f position)
@@ -57,25 +114,22 @@ void gui::Button::init()
 	this->buttonState = ButtonStates::Default;
 
 	//Shape stuff
-	this->shape.setSize(
-		sf::Vector2f(this->data->PercentSizeX(this->sizePercent.x),
-			this->data->PercentSizeY(this->sizePercent.y)));
+	this->shape.setSize(this->size);
 
 	this->shape.setFillColor(this->BTNcolor);
 
-	this->shape.setPosition(
-		sf::Vector2f(this->data->PercentSizeX(this->position.x),
-			this->data->PercentSizeY(this->position.y)));
+	this->shape.setPosition(this->position);
 }
 
 //Constructors && Destructors
-gui::Button::Button(Data* data, std::string BTNText,
-	float fontPercentSize, sf::Vector2f position, sf::Vector2f sizePercent,
+gui::Button::Button(std::string BTNText,
+	float fontSize, sf::Font* font, sf::Vector2f position, sf::Vector2f size,
 	sf::Color BTNcolor, sf::Color BTNHoverColor, sf::Color BTNUsedColor,
 	sf::Color BTNTextColor, sf::Color BTNTextHoverColor, sf::Color BTNTextUsedColor,
 	sf::Color BTNOutlineColor, sf::Color BTNOutlineHoverColor, sf::Color BTNOutlineUsedColor, float outlineThickness)
-	: ButtonBaseClass(data, position, sizePercent, outlineThickness),
-	fontPercentSize(fontPercentSize),
+	: ButtonBaseClass(position, size, outlineThickness),
+	fontSize(fontSize),
+	font(font),
 	BTNcolor(BTNcolor),
 	BTNHoverColor(BTNHoverColor),
 	BTNUsedColor(BTNUsedColor),
@@ -92,27 +146,18 @@ gui::Button::Button(Data* data, std::string BTNText,
 
 	//Text stuff
 	this->numChars = static_cast<short>(BTNText.length());
-	this->text.setString(BTNText);
-	this->text.setFont(*this->data->font);
-	this->text.setCharacterSize(static_cast<unsigned>(this->data->PercentSizeX(this->fontPercentSize)));
-
-	//default possition
-	this->text.setPosition(
-		sf::Vector2f(
-			this->shape.getPosition().x + (this->shape.getGlobalBounds().width - this->text.getGlobalBounds().width) / 2.f,
-			this->shape.getPosition().y + (this->shape.getGlobalBounds().height - this->text.getGlobalBounds().height) / 2.f
-		));	
+	this->text = this->createText(BTNText, this->font, this->fontSize, Align::Center);
 
 	this->shape.setOutlineThickness(this->outlineThickness);
 	this->shape.setOutlineColor(this->BTNOutlineUsedColor);
 
 }
 
-gui::Button::Button(Data* data, sf::Texture* texture,
-	sf::Vector2f position, sf::Vector2f sizePercent, 
+gui::Button::Button(sf::Texture* texture,
+	sf::Vector2f position, sf::Vector2f size, 
 	sf::Color BTNcolor, sf::Color BTNHoverColor, sf::Color BTNUsedColor, 
 	sf::Color BTNOutlineColor, sf::Color BTNOutlineHoverColor, sf::Color BTNOutlineUsedColor, float outlineThickness)
-	: ButtonBaseClass(data, position, sizePercent, outlineThickness),
+	: ButtonBaseClass(position, size, outlineThickness),
 	texture(texture),
 	BTNcolor(BTNcolor),
 	BTNHoverColor(BTNHoverColor),
@@ -129,11 +174,6 @@ gui::Button::Button(Data* data, sf::Texture* texture,
 
 gui::Button::~Button()
 {
-}
-
-const sf::FloatRect& gui::Button::getTextBlounds() const
-{
-	return this->textBounds;
 }
 
 const short unsigned & gui::Button::getID() const
@@ -222,12 +262,12 @@ void gui::MultiDimensionalButton::init()
 
 //Constructors && Destructors
 
-gui::MultiDimensionalButton::MultiDimensionalButton(Data * data, Button * baseButton,
+gui::MultiDimensionalButton::MultiDimensionalButton(Button * baseButton,
 	ButtonBaseClass * downButton, 
 	ButtonBaseClass * upButton, 
 	ButtonBaseClass * rightButton, 
 	ButtonBaseClass * leftButton)
-	: ButtonBaseClass(data, baseButton->getPosition(), baseButton->getSizePercent(), 0),
+	: ButtonBaseClass(baseButton->getPosition(), baseButton->getSize(), 0),
 	baseButton(baseButton), downButton(downButton), rightButton(rightButton), leftButton(leftButton)
 {
 	this->init();
@@ -245,7 +285,7 @@ void gui::MultiDimensionalButton::switchButtons(const float & deltatime)
 
 }
 
-const bool & gui::MultiDimensionalButton::isActive() const { return this->active; }
+inline const bool & gui::MultiDimensionalButton::isActive() const { return this->active; }
 
 inline const bool gui::MultiDimensionalButton::pressed() const { return this->baseButton->pressed(); }
 
@@ -284,54 +324,40 @@ void gui::MultiDimensionalButton::render(sf::RenderTarget * target)
 void gui::Counter::init()
 {
 	//frame && background
-	this->background.setPosition(sf::Vector2f(
-		this->data->PercentSizeX(this->position.x),
-		this->data->PercentSizeY(this->position.y)));
+	this->shape.setPosition(this->position);
 
-	this->background.setSize(sf::Vector2f(
-		this->data->PercentSizeX(this->sizePercent.x),
-		this->data->PercentSizeY(this->sizePercent.y)
-	));
+	this->shape.setSize(this->size);
 
-	this->background.setFillColor(this->backGroundColor);
-	this->background.setOutlineThickness(-1);
-	this->background.setOutlineColor(this->outlineColor);
+	this->shape.setFillColor(this->backGroundColor);
+	this->shape.setOutlineThickness(-1);
+	this->shape.setOutlineColor(this->outlineColor);
 
 
 	//text stuff
-	this->text.setFont(*this->data->font);
-	this->text.setString(std::to_string(this->value));
-	this->text.setFillColor(sf::Color(0, 0, 0, 255));
-	this->text.setCharacterSize(static_cast<unsigned>(this->data->PercentSizeX(this->fontPercentSize)));
 
-	//default possition
-	this->text.setPosition(
-		sf::Vector2f(
-			this->background.getPosition().x + (this->background.getGlobalBounds().width - this->text.getGlobalBounds().width) / 2.f - this->data->getPercent(this->background.getGlobalBounds().width, 5.f),
-			this->background.getPosition().y + (this->background.getGlobalBounds().height - this->text.getGlobalBounds().height) / 2.f - this->data->getPercent(this->background.getGlobalBounds().width, 5.f)
-		));
-
-
+	this->text = this->createText(std::to_string(this->value), this->font, this->fontSize, Align::Center);
 }
 
 
 //Constructors && Destructors
 
 gui::Counter::Counter()
-	:Entity(nullptr, sf::Vector2f(0.f, 0.f), sf::Vector2f(10.f, 10.f)),
-	fieldWithZeros(true), fontPercentSize(5.f), value(0)
+	:Entity(sf::Vector2f(0.f, 0.f), sf::Vector2f(10.f, 10.f)),
+	fieldWithZeros(true), fontSize(5.f), value(0), font(nullptr)
 {
 
 	//Counter Default Contructor
+	this->init();
 }
 
-gui::Counter::Counter(Data* data, sf::Vector2f position, sf::Vector2f sizePercent, 
-					float fontPercentSize, int defaultValue, bool filedWithZeros,
+gui::Counter::Counter(sf::Vector2f position, sf::Vector2f sizePercent, 
+					float fontSize, sf::Font* font, int defaultValue, bool filedWithZeros,
 					sf::Color backGroundColor, sf::Color textColor, sf::Color outlineColor)
-	:Entity(data, position, sizePercent)
+	:Entity(position, sizePercent)
 {
 	//init variables
-	this->fontPercentSize = fontPercentSize;
+	this->fontSize = fontSize;
+	this->font = font;
 	this->value = defaultValue;
 	this->backGroundColor = backGroundColor;
 	this->textColor = textColor;
@@ -363,7 +389,7 @@ const int& gui::Counter::getValue() const
 
 void gui::Counter::render(sf::RenderTarget* target)
 {
-	target->draw(this->background);
+	target->draw(this->shape);
 	target->draw(this->text);
 }
 
@@ -376,14 +402,14 @@ void gui::Timer::init()
 {
 	this->active = false;
 	this->text.setString("0");
-	//this->clock.restart;
+	this->clock.restart();
 }
 
 
 //Constructos && Destructors
 
-gui::Timer::Timer(Data* data, sf::Vector2f position, sf::Vector2f sizePercent, float fontPercentSize)
-	:Counter(data, position, sizePercent, fontPercentSize)
+gui::Timer::Timer(sf::Vector2f position, sf::Vector2f size, float fontSize, sf::Font* font)
+	:Counter(position, size, fontSize, font)
 {
 	this->init();
 }
@@ -421,5 +447,3 @@ void gui::Timer::update()
 		this->text.setString(std::to_string(this->time.asSeconds()));
 	}
 }
-
-

@@ -11,6 +11,9 @@ class Minefield
 public:
 	Minefield(float grid, sf::Vector2i& size, sf::Vector2f& position);
 	~Minefield();
+	
+	//Accessors
+	const bool contains(sf::Vector2f& point) const;
 
 	//Functions
 	void setFlag(int x, int y);
@@ -26,6 +29,7 @@ private:
 	sf::Vector2i size;
 	sf::Vector2f position;
 	sf::RectangleShape selector;
+	sf::RectangleShape background;
 	std::vector < std::vector< std::stack<Tile*> > >field;
 	float grid;
 
@@ -34,7 +38,7 @@ private:
 
 	//Inits
 	void initField();
-
+	void initBackground();
 };
 
 #endif // !_MINEFIELD
