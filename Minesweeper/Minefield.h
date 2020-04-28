@@ -9,31 +9,37 @@ class Tile;
 class Minefield
 {
 public:
-	Minefield(float grid, sf::Vector2i& size, sf::Vector2f& position);
+	Minefield(float grid, sf::Vector2i& size, sf::Vector2f& position, unsigned short bombAmount = 10);
 	~Minefield();
-	
+
 	//Accessors
 	const bool contains(sf::Vector2f& point) const;
 
-	//Functions
+	//Gameplay Functions
 	void setFlag(int x, int y);
 	void openTile(int x, int y);
 
-	//void updateGui(const float& deltaTime);
+	void generateBombs();
+
+	void openEmptyField(sf::Vector2i pos);
+
 	void update(const float& deltaTime);
 	const void render(sf::RenderTarget* target);
 
 private:
 	//Variables
 	int layers;
+	float grid;
+	unsigned short bombAmount;
+
 	sf::Vector2i size;
 	sf::Vector2f position;
 	sf::RectangleShape selector;
 	sf::RectangleShape background;
 	std::vector < std::vector< std::stack<Tile*> > >field;
-	float grid;
 
 	//functions
+	const bool canBeOpened(sf::Vector2f pos) const;
 	void clear();
 
 	//Inits

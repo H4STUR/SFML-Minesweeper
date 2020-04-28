@@ -2,8 +2,9 @@
 
 
 //Inits
-void Tile::initTile()
+void Tile::setType(tileType type)
 {
+	this->type = type;
 
 	//setting texture for tiles next to bomb 
 	if (this->type >= 1 && this->type <= 8)
@@ -51,16 +52,15 @@ void Tile::initTile()
 }
 
 
-Tile::Tile()
+Tile::Tile(tileType type)
 {
-	this->initTile();
+	this->setType(type);
 }
 
 //Constructors && Destructors
-Tile::Tile(float grid, sf::Vector2f position, short type)
+Tile::Tile(float grid, sf::Vector2f position, tileType type)
 {
-	this->type = type;
-	this->initTile();
+	this->setType(type);
 	this->shape.setPosition(position);
 	this->shape.setSize(sf::Vector2f(grid, grid));
 	this->shape.setFillColor(sf::Color::White);
@@ -76,6 +76,11 @@ Tile::~Tile()
 const short Tile::getType() const
 {
 	return this->type;
+}
+
+const unsigned short Tile::getAmountOfNeighborBombs() const
+{
+	return this->neighborBombAmount;
 }
 
 //Setters

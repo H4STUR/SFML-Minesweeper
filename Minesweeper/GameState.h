@@ -23,6 +23,11 @@ public:
 	virtual void update(const float& deltaTime);
 	void updateButtons(const float& deltaTime);
 	virtual void render(sf::RenderTarget* target = nullptr);
+
+	//Gameplay functions
+	void startGame();
+	void resetGame();
+
 private:
 	//variables
 	Minefield* minefield;

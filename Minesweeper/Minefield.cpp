@@ -31,14 +31,14 @@ void Minefield::initField()
 
 			this->field[x][y].push(new Tile(this->grid, sf::Vector2f(
 										(this->grid * x) + position.x,
-										(this->grid * y) + position.y), 9));
+										(this->grid * y) + position.y), tileType::full));
 		}
 	}
 	
 }
 
 //Constructors && Destructors
-Minefield::Minefield(float grid, sf::Vector2i& size, sf::Vector2f& position)
+Minefield::Minefield(float grid, sf::Vector2i& size, sf::Vector2f& position, unsigned short bombAmount)
 	: size(size), position(position)
 {
 	this->layers = 3;
@@ -60,27 +60,72 @@ const bool Minefield::contains(sf::Vector2f& point) const
 		return false;
 }
 
+//Gameplay functions
 void Minefield::setFlag(int x, int y)
 {
-	if (this->field[x][y].top()->getType() == tileType::full)
+	if (!this->field[x][y].empty())
 	{
-		this->field[x][y].push(new Tile(this->grid, sf::Vector2f(
-									(this->grid * x) + position.x,
-									(this->grid * y) + position.y), tileType::flag));
-		std::cout << "\nFLAG PLACED";
+		if (this->field[x][y].top()->getType() == tileType::full)
+		{
+			this->field[x][y].push(new Tile(this->grid, sf::Vector2f(
+				(this->grid * x) + position.x,
+				(this->grid * y) + position.y), tileType::flag));
+			std::cout << "\nFLAG PLACED";
+		}
+		else if (this->field[x][y].top()->getType() == tileType::flag)
+		{
+			delete this->field[x][y].top();
+			this->field[x][y].pop();
+		}
 	}
-
+	else return;
 }
 
 void Minefield::openTile(int x, int y)
 {
-	if (!this->field[x][y].empty())
+	if (x >= 0 && x < this->size.x && y >= 0 && y < this->size.y)
 	{
-		delete this->field[x][y].top();
-		this->field[x][y].pop();
+		if (!this->field[x][y].empty())
+			if (this->field[x][y].top()->getType() == tileType::full)
+			{
+				delete this->field[x][y].top();
+				this->field[x][y].pop();
+
+				if(this->field[x][y].empty())
+					this->openEmptyField(sf::Vector2i(x, y));
+			}
 	}
-	std::cout << "\n" << this->field[x][y].size() << "\n";
+	else return;
 }
+
+void Minefield::generateBombs()
+{
+	srand(time(NULL));
+	for (unsigned short i = 0; i < this->bombAmount;)
+	{
+		sf::Vector2i bomb = sf::Vector2i(rand() % this->size.x, rand() % this->size.y);
+
+		if (this->field[bomb.x][bomb.y].top()->getType() != tileType::bomb)
+		{
+			this->field[bomb.x][bomb.y].push(new Tile(this->grid, sf::Vector2f(
+				(this->grid * bomb.x) + position.x,
+				(this->grid * bomb.y) + position.y), tileType::bomb));
+
+			i++;
+		}
+	}
+}
+
+void Minefield::openEmptyField(sf::Vector2i pos)
+{
+	for (int x = pos.x - 1; x <= pos.x + 1; x++)
+		for (int y = pos.y - 1; y <= pos.y + 1; y++)
+		{
+				this->openTile(x, y);
+		}
+
+}
+
 
 void Minefield::update(const float& deltaTime)
 {
@@ -98,6 +143,11 @@ const void Minefield::render(sf::RenderTarget* target)
 				this->field[x][y].top()->render(target);
 		}
 	}
+}
+
+const bool Minefield::canBeOpened(sf::Vector2f pos) const
+{
+	return (this->field[pos.x][pos.y].top()->getType() == tileType::empty);
 }
 
 void Minefield::clear()

@@ -95,6 +95,21 @@ GameState::GameState(Data* data, sf::Vector2i fieldSize)
 	this->minefield = new Minefield(this->grid, this->fieldSize, this->fieldPosition);
 }
 
+//Gameplay functions
+
+void GameState::startGame()
+{
+
+}
+
+void GameState::resetGame()
+{
+}
+
+
+
+//
+
 GameState::~GameState()
 {
 	delete this->minefield;
@@ -191,5 +206,4 @@ void GameState::render(sf::RenderTarget* target)
 	this->restartButton->render(target);
 	this->timer->render(target);
 }
-
 
