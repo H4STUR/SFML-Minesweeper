@@ -31,6 +31,7 @@ private:
 	int layers;
 	float grid;
 	unsigned short bombAmount;
+	bool areBombGenerated;
 
 	sf::Vector2i size;
 	sf::Vector2f position;
@@ -43,7 +44,7 @@ private:
 	void clear();
 
 	//Inits
-	void initField();
+	void reserveField();
 	void initBackground();
 };
 

@@ -13,28 +13,33 @@ void Minefield::initBackground()
 	this->background.setFillColor(sf::Color(50, 50, 50, 250));
 }
 
-void Minefield::initField()
+void Minefield::reserveField()
 {
 	////	initializing and resizing minefield
-
+	int amount = 0;
 	this->field.reserve(this->size.x);
 	for (int x = 0; x < this->size.x; x++)
 	{
 		this->field.emplace_back(std::vector< std::stack<Tile*> >());
 
 		this->field[x].reserve(this->size.y);
+
 		for (int y = 0; y < this->size.y; y++)
 		{
 			this->field[x].emplace_back( std::stack<Tile* >());
 
-			//adding tiles to stack
+			std::cout << amount << " ";
+			amount++;
 
 			this->field[x][y].push(new Tile(this->grid, sf::Vector2f(
 										(this->grid * x) + position.x,
 										(this->grid * y) + position.y), tileType::full));
 		}
+		std::cout << "\n";
 	}
 	
+	if (!this->areBombGenerated)
+		this->generateBombs();
 }
 
 //Constructors && Destructors
@@ -43,8 +48,10 @@ Minefield::Minefield(float grid, sf::Vector2i& size, sf::Vector2f& position, uns
 {
 	this->layers = 3;
 	this->grid = grid;
+	this->areBombGenerated = false;
+	this->bombAmount = bombAmount;
 	this->initBackground();
-	this->initField();
+	this->reserveField();
 }
 
 Minefield::~Minefield()
@@ -100,20 +107,31 @@ void Minefield::openTile(int x, int y)
 
 void Minefield::generateBombs()
 {
+	unsigned short i = 0;
 	srand(time(NULL));
-	for (unsigned short i = 0; i < this->bombAmount;)
-	{
-		sf::Vector2i bomb = sf::Vector2i(rand() % this->size.x, rand() % this->size.y);
 
-		if (this->field[bomb.x][bomb.y].top()->getType() != tileType::bomb)
-		{
-			this->field[bomb.x][bomb.y].push(new Tile(this->grid, sf::Vector2f(
-				(this->grid * bomb.x) + position.x,
-				(this->grid * bomb.y) + position.y), tileType::bomb));
+	//!!!
+	//! 
+	//! Here's problem, field doesn't generate itself properly
+	//! 
+	//!!!
 
-			i++;
-		}
-	}
+	//while (i < 1)
+	//{
+	//	
+	//	sf::Vector2i bomb = sf::Vector2i(rand() % this->size.x, rand() % this->size.y);
+
+	//	std::cout << "\nX: " << bomb.x << "  Y: " << bomb.y;
+	//	if (this->field[bomb.x][bomb.x].empty())
+	//	{
+	//		this->field[bomb.x][bomb.x].push(new Tile(this->grid, sf::Vector2f(
+	//			(this->grid * bomb.x) + position.x,
+	//			(this->grid * bomb.y) + position.y), tileType::bomb));
+
+	//		i++;
+	//	}
+	//}
+	this->areBombGenerated = true;
 }
 
 void Minefield::openEmptyField(sf::Vector2i pos)
